@@ -1,0 +1,44 @@
+buildscript {
+  repositories {
+    jcenter()
+  }
+
+  dependencies {
+    classpath (
+      'com.terrafolio:gradle-jenkins-plugin:1.2.2'
+    )
+  }
+}
+
+apply plugin: "com.terrafolio.jenkins"
+
+jenkins {
+  servers {
+    production {
+      url "yourjenkinsinstancehere"
+      secure true
+      username "jenkins"
+      password "jenkinspassword"
+    }
+  }
+
+  defaultServer servers.production
+
+  dsl fileTree('src/main/jenkins').include('*.groovy')
+}
+
+task compile {
+  dependsOn dumpJenkinsItems
+}
+
+task check {
+  dependsOn compile
+}
+
+task build {
+  dependsOn check
+}
+
+updateJenkinsJobs {
+  dependsOn build
+}

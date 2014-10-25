@@ -1,0 +1,26 @@
+apply plugin: 'groovy'
+
+repositories {
+  mavenCentral()
+  maven { url 'http://repo.jenkins-ci.org/releases/' }
+}
+
+dependencies {
+  compile (
+    gradleApi(),
+    localGroovy(),
+    'commons-io:commons-io:2.4'
+  )
+
+  compile('org.jenkins-ci.plugins:job-dsl-core:1.24') {
+    exclude(module: 'groovy-all')
+  }
+
+  testCompile('org.spockframework:spock-core:0.7-groovy-2.0') {
+    exclude group:'org.codehaus.groovy'
+  }
+
+  testCompile (
+    'cglib:cglib-nodep:2.2',
+  )
+}
