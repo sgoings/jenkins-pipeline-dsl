@@ -6,15 +6,24 @@ import javaposse.jobdsl.dsl.Job
 
 @Category(JobParent)
 class PipelineDsl {
-  Job create(Map<String, String> options, Closure closure) {
-    def job = options['type'].newInstance(jm)
 
-    //job.apply(extensions)
+  static Map<Class, Closure> templates = new HashMap<Class, Closure>()
 
-    job.dsl(closure)
+  void template(Map<String, String> options, Closure closure) {
+    templates[options['type']] = closure
+  }
 
-    referencedJobs.addAll(job.generate())
+  def create(Map<String, String> options, Closure closure) {
+    def jobGroup = options['type'].newInstance(jm)
 
-    return job
+    if(templates[options['type']]) {
+      jobGroup.with(templates[options['type']])
+    }
+
+    jobGroup.with(closure)
+
+    referencedJobs.addAll(jobGroup.generate())
+
+    return jobGroup
   }
 }

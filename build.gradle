@@ -5,20 +5,21 @@ buildscript {
 
   dependencies {
     classpath (
-      'com.terrafolio:gradle-jenkins-plugin:1.2.2'
+      'com.terrafolio:gradle-jenkins-plugin:1.2.2',
     )
   }
 }
 
 apply plugin: "com.terrafolio.jenkins"
 
+repositories {
+  addAll(buildscript.repositories)
+}
+
 jenkins {
   servers {
     production {
-      url "yourjenkinsinstancehere"
-      secure true
-      username "jenkins"
-      password "jenkinspassword"
+      url "localhost:8080"
     }
   }
 
@@ -37,8 +38,4 @@ task check {
 
 task build {
   dependsOn check
-}
-
-updateJenkinsJobs {
-  dependsOn build
 }
