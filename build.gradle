@@ -5,7 +5,7 @@ buildscript {
 
   dependencies {
     classpath (
-      'com.terrafolio:gradle-jenkins-plugin:1.2.2',
+      'com.terrafolio:gradle-jenkins-plugin:1.2.3',
     )
   }
 }

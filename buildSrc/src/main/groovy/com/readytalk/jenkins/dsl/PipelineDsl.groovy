@@ -1,29 +1,27 @@
 package com.readytalk.jenkins.dsl
 
-import com.readytalk.jenkins.jobs.*
-import javaposse.jobdsl.dsl.JobParent
-import javaposse.jobdsl.dsl.Job
+import javaposse.jobdsl.dsl.DslFactory
 
-@Category(JobParent)
+import com.readytalk.jenkins.jobs.components.GradleArtifactory
+
+@Category(DslFactory)
 class PipelineDsl {
 
-  static Map<Class, Closure> templates = new HashMap<Class, Closure>()
+  static Map<Class, Object> defaults = [:]
 
-  void template(Map<String, String> options, Closure closure) {
-    templates[options['type']] = closure
+  void defaults(Class type, Closure closure) {
+    object = type.newInstance()
+    object.with(closure)
+    defaults[type] = object
   }
 
-  def create(Map<String, String> options, Closure closure) {
-    def jobGroup = options['type'].newInstance(jm)
-
-    if(templates[options['type']]) {
-      jobGroup.with(templates[options['type']])
-    }
+  void create(Class type, Closure closure) {
+    //TODO: Handle this dependency (jm) via DI (so we can just do injector.get(Some.class)
+    // and have components auto cloned + added
+    def jobGroup = type.newInstance(jm, defaults[GradleArtifactory])
 
     jobGroup.with(closure)
 
     referencedJobs.addAll(jobGroup.generate())
-
-    return jobGroup
   }
 }
