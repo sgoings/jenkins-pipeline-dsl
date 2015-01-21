@@ -3,24 +3,20 @@ package com.readytalk.jenkins.jobs
 import javaposse.jobdsl.dsl.JobManagement
 import javaposse.jobdsl.dsl.Job
 
-import com.readytalk.jenkins.jobs.components.JavaMetrics
-import com.readytalk.jenkins.jobs.components.GradleArtifactory
+import com.google.inject.Inject
 
-class GradleBuild extends BasicJob implements JavaMetrics {
+class GradleBuild extends BasicJob {
 
   String tasks = "ci"
   String args
 
-  GradleArtifactory artifactory
-
-  GradleBuild(JobManagement jm, GradleArtifactory artifactory) {
+  @Inject
+  GradleBuild(JobManagement jm) {
     super(jm)
-    this.artifactory = artifactory.clone()
   }
 
   Set<Job> generate() {
-    JavaMetrics.super.apply()
-    artifactory.apply(job)
+    super.generate()
 
     steps {
       gradle("${tasks}", "${args} --no-daemon")

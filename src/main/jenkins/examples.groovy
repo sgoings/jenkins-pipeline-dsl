@@ -4,20 +4,30 @@ import com.readytalk.jenkins.jobs.components.*
 
 use(PipelineDsl) {
 
-  defaults(GradleArtifactory) {
-  	url = "http://artifactory.example.com/artifactory"
-  	repo = "libs-integration-local"
-  }
+  def myArtifactory = new GradleArtifactory(url: "http://my.artifactory.com/artifactory",
+                                            repo: "my-snapshot-repo")
+
+  // configuration("some file")
+
+  // create(Pipeline) {
+  //   build(GradleBuild)
+
+  //   deploy(AnsibleDeploy)
+
+  //   test(PythonAutomator)
+  // }
 
   create(GradleBuild) {
     name = "test"
     addDownstream("ci-1")
 
-    artifactory.repo = "libs-snapshots-local"
+    add(new GradleArtifactory(url: 'test', repo: 'test2'))
   }
 
   create(GradleBuild) {
-  	name = "test2"
+    name = "test2"
+
+    add(myArtifactory)
   }
 
 }

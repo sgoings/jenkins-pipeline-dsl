@@ -1,12 +1,17 @@
 package com.readytalk.jenkins.jobs.components
 
-trait JavaMetrics {
+import groovy.transform.AutoClone
+
+import javaposse.jobdsl.dsl.Job
+
+@AutoClone
+class JavaMetrics implements JobComponent {
 
   boolean metrics = true
 
-  void apply() {
+  void apply(Object job) {
     if(metrics) {
-      publishers {
+      job.publishers {
         checkstyle('**/reports/checkstyle/main.xml')
         findbugs('**/reports/findbugs/main.xml', true)
         warnings(['Java Compiler (javac)'])

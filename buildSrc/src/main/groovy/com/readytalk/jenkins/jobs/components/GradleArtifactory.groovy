@@ -5,12 +5,12 @@ import groovy.transform.AutoClone
 import javaposse.jobdsl.dsl.Job
 
 @AutoClone
-class GradleArtifactory {
+class GradleArtifactory implements JobComponent {
 
-  String url
-  String repo
+  String url = "http://artifactory.example.com/artifactory"
+  String repo = "libs-integration-local"
 
-  void apply(Job job) {
+  void apply(Object job) {
     assert url, repo
 
     job.configure { project ->

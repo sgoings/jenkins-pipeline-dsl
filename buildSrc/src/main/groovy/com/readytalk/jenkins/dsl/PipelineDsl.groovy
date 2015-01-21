@@ -4,21 +4,26 @@ import javaposse.jobdsl.dsl.DslFactory
 
 import com.readytalk.jenkins.jobs.components.GradleArtifactory
 
+import com.google.inject.Guice
+import com.google.inject.Injector
+import com.google.inject.AbstractModule
+
+import com.readytalk.jenkins.jobs.components.JobComponent
+
 @Category(DslFactory)
 class PipelineDsl {
 
-  static Map<Class, Object> defaults = [:]
+  static AbstractModule module = new ReadyTalkModule()
+  static Injector injector = Guice.createInjector(module)
 
-  void defaults(Class type, Closure closure) {
-    object = type.newInstance()
-    object.with(closure)
-    defaults[type] = object
+  void defaults(Closure closure) {
+  	module.with(closure)
   }
 
   void create(Class type, Closure closure) {
-    //TODO: Handle this dependency (jm) via DI (so we can just do injector.get(Some.class)
-    // and have components auto cloned + added
-    def jobGroup = type.newInstance(jm, defaults[GradleArtifactory])
+  	module.jobManagement = jm
+
+    def jobGroup = injector.getInstance(type)
 
     jobGroup.with(closure)
 
